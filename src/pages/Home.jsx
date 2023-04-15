@@ -47,9 +47,13 @@ const Home = () => {
     <div>
       <Navbar />
 
-      <h2 className="mt-5 text-2xl text-slate-800 font-semibold text-center">
+      {!userContent && <h2 className="mt-5 text-2xl text-slate-800 font-semibold text-center">
+        Welcome To My App
+      </h2>}
+
+      {userContent && <h2 className="mt-5 text-2xl text-slate-800 font-semibold text-center">
         My Data
-      </h2>
+      </h2>}
 
       {loading && (
         <div className="flex justify-center mt-20">
