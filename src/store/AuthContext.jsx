@@ -15,8 +15,13 @@ const AuthContext = createContext();
 export const AuthContextProvider = (props) => {
   // SETTING UP USER STATE
   const [user, setUser] = useState(null);
+  const [userContent, setUserContent] = useState(null);
 
   const navigate = useNavigate();
+
+  const userContentHandler = (data) => {
+    setUserContent(data);
+  }
 
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
@@ -27,6 +32,7 @@ export const AuthContextProvider = (props) => {
 
         // SETTING UP AUTH TOKEN
         localStorage.setItem("userToken", token);
+        localStorage.setItem("userId", user.uid);
       })
       .catch((err) => {
         console.log(err);
@@ -35,7 +41,9 @@ export const AuthContextProvider = (props) => {
 
   const logOut = () => {
     signOut(auth);
+    setUserContent(null);
     localStorage.removeItem('userToken');
+    localStorage.removeItem('userId');
     navigate('/');
   };
 
@@ -49,7 +57,7 @@ export const AuthContextProvider = (props) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ googleSignIn, logOut, user }}>
+    <AuthContext.Provider value={{ googleSignIn, logOut, userContentHandler, user, userContent }}>
       {props.children}
     </AuthContext.Provider>
   );

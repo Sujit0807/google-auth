@@ -5,10 +5,13 @@ import Navbar from "../components/Navbar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BallTriangle } from "react-loader-spinner";
+import { getDatabase, ref, set, push } from "firebase/database";
+
 
 const Dashboard = () => {
   const { user } = UserAuth();
   const navigate = useNavigate();
+  const db = getDatabase();
 
   const toastSuccess = (msg) => {
     toast.success(msg);
@@ -25,17 +28,29 @@ const Dashboard = () => {
 
   const submitFormHandler = () => {
     if (!name || !title || !content) {
-      toastWarn("Plz enter fields");
+      toastWarn("Please enter all fields");
       return;
     }
-
-    toastSuccess("Form Submitted!");
-
-    setTitle("");
-    setName("");
-    setContent("");
+  
+    const blogRef = ref(db, `users/${user.uid}/blogs`);
+    const newBlogRef = push(blogRef);
+  
+    set(newBlogRef, {
+      name,
+      title,
+      content
+    })
+      .then(() => {
+        toastSuccess("Form Submitted!");
+        setTitle("");
+        setName("");
+        setContent("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
+  
   useEffect(() => {
     if (!localStorage.getItem("userToken")) {
       navigate("/login");
